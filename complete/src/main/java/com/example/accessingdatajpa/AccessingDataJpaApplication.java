@@ -17,11 +17,14 @@ public class AccessingDataJpaApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(CustomerRepository repository) {
+	public CommandLineRunner demo(CustomerRepository repository, CustomerService service) {
 		return (args) -> {
+			// Make sure we start with an empty database.
+			repository.deleteAll();
+			
 			// save a few customers
-			repository.save(new Customer("Jack", "Bauer"));
-			repository.save(new Customer("Chloe", "O'Brian"));
+			Customer jack = repository.save(new Customer("Jack", "Bauer"));
+			Customer chloe = repository.save(new Customer("Chloe", "O'Brian"));
 			repository.save(new Customer("Kim", "Bauer"));
 			repository.save(new Customer("David", "Palmer"));
 			repository.save(new Customer("Michelle", "Dessler"));
@@ -51,6 +54,10 @@ public class AccessingDataJpaApplication {
 			// 	log.info(bauer.toString());
 			// }
 			log.info("");
+			
+			for(Customer c : service.updateAndSearchCustomer(jack.getId(), chloe.getId())) {
+				log.info("Updated last name: " + c.getLastName());
+			}
 		};
 	}
 
